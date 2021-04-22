@@ -55,7 +55,7 @@ public abstract class DistributionEventReceiver<D extends DistributionJobDetails
             //else:
             //      setAuditEntrySuccess
             //MessageResult result = channel.distributeMessages(details.get(), event.getProviderMessages());
-            MessageResult result = new MessageResult("test");
+            MessageResult result = new MessageResult("No result provided");
             try {
                 result = channel.distributeMessages(details.get(), event.getProviderMessages());
             } catch (Exception e) {

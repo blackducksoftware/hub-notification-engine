@@ -21,7 +21,6 @@ import com.synopsys.integration.alert.common.descriptor.config.field.errors.Aler
 import com.synopsys.integration.alert.common.descriptor.config.field.errors.FieldStatusSeverity;
 import com.synopsys.integration.alert.common.descriptor.config.ui.ProviderDistributionUIConfig;
 import com.synopsys.integration.alert.common.message.model.MessageResult;
-import com.synopsys.integration.alert.common.message.model.MessageResultStatus;
 import com.synopsys.integration.alert.common.persistence.accessor.ConfigurationAccessor;
 import com.synopsys.integration.alert.common.persistence.accessor.FieldUtility;
 import com.synopsys.integration.alert.common.persistence.accessor.ProviderDataAccessor;
@@ -76,9 +75,9 @@ public class BlackDuckDistributionTestAction extends TestAction {
         }
 
         if (MessageResult.hasFieldStatusBySeverity(fieldStatuses, FieldStatusSeverity.ERROR)) {
-            return new MessageResult(MessageResultStatus.FAILURE, "There were errors with the BlackDuck provider fields", fieldStatuses);
+            return new MessageResult(false, "There were errors with the BlackDuck provider fields", fieldStatuses);
         }
-        return new MessageResult(MessageResultStatus.SUCCESS, "Successfully tested BlackDuck provider fields", fieldStatuses);
+        return new MessageResult(true, "Successfully tested BlackDuck provider fields", fieldStatuses);
     }
 
     private Optional<AlertFieldStatus> validatePatternMatchesProject(Long providerConfigId, String projectNamePattern) {

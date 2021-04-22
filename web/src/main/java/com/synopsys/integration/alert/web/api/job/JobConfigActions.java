@@ -47,7 +47,6 @@ import com.synopsys.integration.alert.common.exception.AlertException;
 import com.synopsys.integration.alert.common.exception.AlertFieldException;
 import com.synopsys.integration.alert.common.exception.AlertMethodNotAllowedException;
 import com.synopsys.integration.alert.common.message.model.MessageResult;
-import com.synopsys.integration.alert.common.message.model.MessageResultStatus;
 import com.synopsys.integration.alert.common.persistence.accessor.ConfigurationAccessor;
 import com.synopsys.integration.alert.common.persistence.accessor.DescriptorAccessor;
 import com.synopsys.integration.alert.common.persistence.accessor.FieldUtility;
@@ -481,7 +480,7 @@ public class JobConfigActions extends AbstractJobResourceActions {
                                                                .map(fieldStatus -> AlertFieldStatus.warning(fieldStatus.getFieldName(), fieldStatus.getFieldMessage()))
                                                                .collect(Collectors.toList());
                 List<AlertFieldStatus> allWarnings = ListUtils.union(providerConfigTestResult.fieldWarnings(), deescalatedErrors);
-                return new MessageResult(MessageResultStatus.SUCCESS, "Provider Config Invalid", allWarnings);
+                return new MessageResult(true, "Provider Config Invalid", allWarnings);
             }
         }
         return new MessageResult("Provider Config Valid");

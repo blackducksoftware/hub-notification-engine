@@ -613,7 +613,7 @@ public class JobConfigActionsTest {
             @Override
             public MessageResult testConfig(String configId, FieldModel fieldModel, FieldUtility registeredFieldValues) throws IntegrationException {
                 AlertFieldStatus alertFieldStatus = AlertFieldStatus.error("fieldNameTest", "Alert Error Message");
-                return new MessageResult("Test Status Message", List.of(alertFieldStatus));
+                return new MessageResult(false, "Test Status Message", List.of(alertFieldStatus));
             }
         };
         return testAction;

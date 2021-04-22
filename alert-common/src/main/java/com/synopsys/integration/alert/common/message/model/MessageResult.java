@@ -17,9 +17,9 @@ import com.synopsys.integration.alert.common.rest.model.AlertSerializableModel;
 
 public class MessageResult extends AlertSerializableModel {
     private static final String STATUS_MESSAGE_SUCCESS = "Success";
-    private static final MessageResult MESSAGE_RESULT_SUCCESS = new MessageResult(MessageResultStatus.SUCCESS, STATUS_MESSAGE_SUCCESS);
+    private static final MessageResult MESSAGE_RESULT_SUCCESS = new MessageResult(true, STATUS_MESSAGE_SUCCESS);
 
-    private final MessageResultStatus status;
+    private final boolean status;
 
     private final String statusMessage;
     private final List<AlertFieldStatus> fieldStatuses;
@@ -47,22 +47,22 @@ public class MessageResult extends AlertSerializableModel {
     //TODO: might not need this
     public static MessageResult determineStatus(String statusMessage, List<AlertFieldStatus> fieldStatuses) {
         if (hasFieldStatusBySeverity(fieldStatuses, FieldStatusSeverity.ERROR)) {
-            return new MessageResult(MessageResultStatus.FAILURE, statusMessage, fieldStatuses);
+            return new MessageResult(false, statusMessage, fieldStatuses);
         }
-        return new MessageResult(MessageResultStatus.SUCCESS, statusMessage, fieldStatuses);
+        return new MessageResult(true, statusMessage, fieldStatuses);
     }
 
     public MessageResult(String statusMessage) {
-        this(MessageResultStatus.SUCCESS, statusMessage);
+        this(true, statusMessage);
     }
 
-    public MessageResult(MessageResultStatus status, String statusMessage) {
+    public MessageResult(boolean status, String statusMessage) {
         this.status = status;
         this.statusMessage = statusMessage;
         fieldStatuses = List.of();
     }
 
-    public MessageResult(MessageResultStatus status, String statusMessage, List<AlertFieldStatus> fieldStatuses) {
+    public MessageResult(boolean status, String statusMessage, List<AlertFieldStatus> fieldStatuses) {
         this.status = status;
         this.statusMessage = statusMessage;
         this.fieldStatuses = fieldStatuses;

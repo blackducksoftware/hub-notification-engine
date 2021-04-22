@@ -24,7 +24,6 @@ import com.synopsys.integration.alert.channel.util.RestMessageResponse;
 import com.synopsys.integration.alert.channel.util.RestResponseStatus;
 import com.synopsys.integration.alert.common.descriptor.config.field.errors.AlertFieldStatus;
 import com.synopsys.integration.alert.common.message.model.MessageResult;
-import com.synopsys.integration.alert.common.message.model.MessageResultStatus;
 import com.synopsys.integration.alert.common.persistence.model.job.details.SlackJobDetailsModel;
 import com.synopsys.integration.alert.descriptor.api.SlackChannelKey;
 import com.synopsys.integration.rest.request.Request;
@@ -66,7 +65,7 @@ public class SlackChannelMessageSender implements ChannelMessageSender<SlackJobD
             }
 
             //TODO: Fix this string
-            return new MessageResult(MessageResultStatus.FAILURE, "Error while sending x out of y Slack message(s)", responseErrors);
+            return new MessageResult(false, "Error while sending x out of y Slack message(s)", responseErrors);
         }
 
         return new MessageResult(String.format("Successfully sent %d Slack message(s)", requests.size()));
