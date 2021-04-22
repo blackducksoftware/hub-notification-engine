@@ -40,8 +40,8 @@ public final class ChannelITTestAssertions {
             Assertions.fail("Failed to distribute simple channel message due to an exception", e);
         }
 
-        assertFalse(messageResult.hasErrors(), "The message result had errors");
-        assertFalse(messageResult.hasWarnings(), "The message result had warnings");
+        assertFalse(messageResult.hasFieldErrors(), "The message result had errors");
+        assertFalse(messageResult.hasFieldWarnings(), "The message result had warnings");
     }
 
     public static <D extends DistributionJobDetailsModel> void assertSendSimpleMessageException(DistributionChannelV2<D> channel, D distributionDetails) {

@@ -48,8 +48,8 @@ public class EmailGlobalTestActionTest {
 
         try {
             MessageResult messageResult = emailGlobalTestAction.testConfig("0", validFieldModel, new FieldUtility(Map.of()));
-            assertFalse(messageResult.hasErrors(), "Expected the message result to not have errors");
-            assertFalse(messageResult.hasWarnings(), "Expected the message result to not have warnings");
+            assertFalse(messageResult.hasFieldErrors(), "Expected the message result to not have errors");
+            assertFalse(messageResult.hasFieldWarnings(), "Expected the message result to not have warnings");
         } catch (AlertException e) {
             fail("An exception was thrown where none was expected", e);
         }
@@ -111,8 +111,8 @@ public class EmailGlobalTestActionTest {
 
         try {
             MessageResult messageResult = emailGlobalTestAction.testConfig("0", validFieldModel, validFieldUtility);
-            assertFalse(messageResult.hasErrors(), "Expected the message result to not have errors");
-            assertFalse(messageResult.hasWarnings(), "Expected the message result to not have warnings");
+            assertFalse(messageResult.hasFieldErrors(), "Expected the message result to not have errors");
+            assertFalse(messageResult.hasFieldWarnings(), "Expected the message result to not have warnings");
         } catch (AlertException e) {
             fail("An exception was thrown where none was expected", e);
         }

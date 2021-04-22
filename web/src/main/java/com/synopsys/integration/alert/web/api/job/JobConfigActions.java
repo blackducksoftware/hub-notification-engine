@@ -47,6 +47,7 @@ import com.synopsys.integration.alert.common.exception.AlertException;
 import com.synopsys.integration.alert.common.exception.AlertFieldException;
 import com.synopsys.integration.alert.common.exception.AlertMethodNotAllowedException;
 import com.synopsys.integration.alert.common.message.model.MessageResult;
+import com.synopsys.integration.alert.common.message.model.MessageResultStatus;
 import com.synopsys.integration.alert.common.persistence.accessor.ConfigurationAccessor;
 import com.synopsys.integration.alert.common.persistence.accessor.DescriptorAccessor;
 import com.synopsys.integration.alert.common.persistence.accessor.FieldUtility;
@@ -354,7 +355,7 @@ public class JobConfigActions extends AbstractJobResourceActions {
                 messageField.ifPresent(model -> fields.put(TestAction.KEY_CUSTOM_MESSAGE, model));
 
                 MessageResult providerTestResult = testProviderConfig(new FieldUtility(fields), jobIdString, channelFieldModel);
-                if (providerTestResult.hasErrors() || providerTestResult.hasWarnings()) {
+                if (providerTestResult.hasFieldErrors() || providerTestResult.hasFieldWarnings()) {
                     responseModel = ValidationResponseModel.fromStatusCollection(providerTestResult.getStatusMessage(), providerTestResult.getFieldStatuses());
                     return new ValidationActionResponse(HttpStatus.OK, responseModel);
                 }
@@ -472,7 +473,7 @@ public class JobConfigActions extends AbstractJobResourceActions {
                                                       .flatMap(providerName -> descriptorProcessor.retrieveTestAction(providerName, ConfigContextEnum.DISTRIBUTION));
         if (providerTestAction.isPresent()) {
             MessageResult providerConfigTestResult = providerTestAction.get().testConfig(jobId, fieldModel, fieldUtility);
-            if (!providerConfigTestResult.hasErrors()) {
+            if (!providerConfigTestResult.hasFieldErrors()) {
                 return providerConfigTestResult;
             } else {
                 List<AlertFieldStatus> deescalatedErrors = providerConfigTestResult.fieldErrors()
@@ -480,7 +481,7 @@ public class JobConfigActions extends AbstractJobResourceActions {
                                                                .map(fieldStatus -> AlertFieldStatus.warning(fieldStatus.getFieldName(), fieldStatus.getFieldMessage()))
                                                                .collect(Collectors.toList());
                 List<AlertFieldStatus> allWarnings = ListUtils.union(providerConfigTestResult.fieldWarnings(), deescalatedErrors);
-                return new MessageResult("Provider Config Invalid", allWarnings);
+                return new MessageResult(MessageResultStatus.SUCCESS, "Provider Config Invalid", allWarnings);
             }
         }
         return new MessageResult("Provider Config Valid");

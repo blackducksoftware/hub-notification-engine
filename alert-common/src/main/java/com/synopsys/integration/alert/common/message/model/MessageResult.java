@@ -17,7 +17,9 @@ import com.synopsys.integration.alert.common.rest.model.AlertSerializableModel;
 
 public class MessageResult extends AlertSerializableModel {
     private static final String STATUS_MESSAGE_SUCCESS = "Success";
-    private static final MessageResult MESSAGE_RESULT_SUCCESS = new MessageResult(STATUS_MESSAGE_SUCCESS);
+    private static final MessageResult MESSAGE_RESULT_SUCCESS = new MessageResult(MessageResultStatus.SUCCESS, STATUS_MESSAGE_SUCCESS);
+
+    private final MessageResultStatus status;
 
     private final String statusMessage;
     private final List<AlertFieldStatus> fieldStatuses;
@@ -40,12 +42,28 @@ public class MessageResult extends AlertSerializableModel {
         return MESSAGE_RESULT_SUCCESS;
     }
 
+    //public static MessageResult createMessageResult() { }
+
+    //TODO: might not need this
+    public static MessageResult determineStatus(String statusMessage, List<AlertFieldStatus> fieldStatuses) {
+        if (hasFieldStatusBySeverity(fieldStatuses, FieldStatusSeverity.ERROR)) {
+            return new MessageResult(MessageResultStatus.FAILURE, statusMessage, fieldStatuses);
+        }
+        return new MessageResult(MessageResultStatus.SUCCESS, statusMessage, fieldStatuses);
+    }
+
     public MessageResult(String statusMessage) {
+        this(MessageResultStatus.SUCCESS, statusMessage);
+    }
+
+    public MessageResult(MessageResultStatus status, String statusMessage) {
+        this.status = status;
         this.statusMessage = statusMessage;
         fieldStatuses = List.of();
     }
 
-    public MessageResult(String statusMessage, List<AlertFieldStatus> fieldStatuses) {
+    public MessageResult(MessageResultStatus status, String statusMessage, List<AlertFieldStatus> fieldStatuses) {
+        this.status = status;
         this.statusMessage = statusMessage;
         this.fieldStatuses = fieldStatuses;
     }
@@ -64,7 +82,7 @@ public class MessageResult extends AlertSerializableModel {
         }
     }
 
-    public boolean hasErrors() {
+    public boolean hasFieldErrors() {
         return hasFieldStatusBySeverity(FieldStatusSeverity.ERROR);
     }
 
@@ -72,7 +90,7 @@ public class MessageResult extends AlertSerializableModel {
         return getFieldStatusesBySeverity(FieldStatusSeverity.ERROR);
     }
 
-    public boolean hasWarnings() {
+    public boolean hasFieldWarnings() {
         return hasFieldStatusBySeverity(FieldStatusSeverity.WARNING);
     }
 
