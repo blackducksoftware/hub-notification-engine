@@ -37,21 +37,36 @@ public class RestChannelUtility {
         this.channelRestConnectionFactory = channelRestConnectionFactory;
     }
 
+    //TODO: Is this used anywhere? Consider removing it if not, otherwise have it return a RestMessageResponse
     public void sendSingleMessage(Request request, String eventDestination) throws AlertException {
         sendMessage(List.of(request), eventDestination);
     }
 
-    public void sendMessage(List<Request> requests, String eventDestination) throws AlertException {
+    //Idea: Run the same code here as before, move exception handling into sendMessageRequest
+    // have it return a new object with success/failure status. Map it to the request
+    //return a status object?
+    // - I sent this many successfully
+    // - This many came back with an error
+    public RestMessageResponse sendMessage(List<Request> requests, String eventDestination) {
+        IntHttpClient intHttpClient = getIntHttpClient();
+        RestMessageResponse messageResponse = new RestMessageResponse();
+        for (Request request : requests) {
+            RestResponseStatus status = sendMessageRequest(intHttpClient, request, eventDestination);
+            messageResponse.add(request, status);
+        }
+        return messageResponse;
+        /*
         try {
             IntHttpClient intHttpClient = getIntHttpClient();
             for (Request request : requests) {
-                sendMessageRequest(intHttpClient, request, eventDestination);
+                sendMessageRequest(intHttpClient, request, eventDestination); //have this return a status object
             }
         } catch (AlertException alertException) {
             throw alertException;
         } catch (Exception ex) {
             throw new AlertException(ex);
         }
+         */
     }
 
     public Request createPostMessageRequest(String url, Map<String, String> headers, String jsonString) {
@@ -82,17 +97,23 @@ public class RestChannelUtility {
         return requestBuilder.build();
     }
 
-    public void sendMessageRequest(IntHttpClient intHttpClient, Request request, String messageType) throws AlertException {
+    //have this return something
+    //may not need the AlertException anymore
+    //public void sendMessageRequest(IntHttpClient intHttpClient, Request request, String messageType) throws AlertException {
+    public RestResponseStatus sendMessageRequest(IntHttpClient intHttpClient, Request request, String messageType) {
         logger.info("Attempting to send a {} message...", messageType);
         try (Response response = sendGenericRequest(intHttpClient, request)) {
             if (RestConstants.OK_200 <= response.getStatusCode() && response.getStatusCode() < RestConstants.MULT_CHOICE_300) {
                 logger.info("Successfully sent a {} message!", messageType);
+                return RestResponseStatus.success();
             } else {
-                throw new AlertException(String.format("Could not send message: %s. Status code: %s", response.getStatusMessage(), response.getStatusCode()));
+                //throw new AlertException(String.format("Could not send message: %s. Status code: %s", response.getStatusMessage(), response.getStatusCode()));
+                return RestResponseStatus.failure(String.format("Could not send message: %s. Status code: %s", response.getStatusMessage(), response.getStatusCode()));
             }
         } catch (Exception e) {
             logger.error("Error sending request", e);
-            throw new AlertException(e.getMessage(), e);
+            //throw new AlertException(e.getMessage(), e);
+            return RestResponseStatus.failure(e.getMessage());
         }
     }
 
