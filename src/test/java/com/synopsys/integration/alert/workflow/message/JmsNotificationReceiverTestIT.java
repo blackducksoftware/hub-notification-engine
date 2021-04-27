@@ -49,10 +49,14 @@ import com.synopsys.integration.alert.test.common.TestProperties;
 import com.synopsys.integration.alert.test.common.TestPropertyKey;
 import com.synopsys.integration.alert.test.common.TestTags;
 import com.synopsys.integration.alert.util.DescriptorMocker;
+import com.synopsys.integration.blackduck.api.manual.component.AffectedProjectVersion;
 import com.synopsys.integration.blackduck.api.manual.component.ProjectNotificationContent;
+import com.synopsys.integration.blackduck.api.manual.component.VulnerabilityNotificationContent;
+import com.synopsys.integration.blackduck.api.manual.component.VulnerabilitySourceQualifiedId;
 import com.synopsys.integration.blackduck.api.manual.enumeration.NotificationType;
 import com.synopsys.integration.blackduck.api.manual.enumeration.OperationType;
 import com.synopsys.integration.blackduck.api.manual.view.ProjectNotificationView;
+import com.synopsys.integration.blackduck.api.manual.view.VulnerabilityNotificationView;
 
 //TODO: Need to remove transactional from the AlertIntegrationTest annotation. Once IALERT-2228 is resolved we should make this an @AlertIntegrationTest again
 @Tag(TestTags.DEFAULT_INTEGRATION)
@@ -108,9 +112,11 @@ public class JmsNotificationReceiverTestIT {
         blackDuckGlobalConfigId = blackduckConfigurationModel.getConfigurationId();
 
         List<AlertNotificationModel> notificationContent = new ArrayList<>();
-        for (Long i = 1L; i <= 1000; i++) {
-            notificationContent.add(createAlertNotificationModel(i, false));
+        for (Long i = 1L; i <= 1; i++) {
+            notificationContent.add(createProjectNotificationAlertNotificationModel(i, false));
         }
+        notificationContent.add(createVulnerabilityAlertNotificationModel(2L, false));
+        notificationContent.add(createVulnerabilityAlertNotificationModel(3L, false));
         savedModels = defaultNotificationAccessor.saveAllNotifications(notificationContent);
 
         SlackJobDetailsModel slackJobDetailsModel = createSlackJobDetailsModel();
@@ -149,7 +155,8 @@ public class JmsNotificationReceiverTestIT {
             blackDuckGlobalConfigId,
             false,
             ".*",
-            List.of(NotificationType.PROJECT.name()),
+            //List.of(NotificationType.PROJECT.name()),
+            List.of(NotificationType.PROJECT.name(), NotificationType.VULNERABILITY.name()),
             List.of(),
             List.of(),
             List.of(),
@@ -165,11 +172,11 @@ public class JmsNotificationReceiverTestIT {
         );
     }
 
-    private AlertNotificationModel createAlertNotificationModel(Long id, boolean processed) {
+    private AlertNotificationModel createProjectNotificationAlertNotificationModel(Long id, boolean processed) {
         ProjectNotificationContent projectNotificationContent = new ProjectNotificationContent();
         projectNotificationContent.setProject("project");
-        //projectNotificationContent.setProjectName(String.format("projectName-%s", id));
-        projectNotificationContent.setProjectName("projectName");
+        projectNotificationContent.setProjectName(String.format("projectName-%s", id));
+        //projectNotificationContent.setProjectName("projectName");
         projectNotificationContent.setOperationType(OperationType.CREATE);
         ProjectNotificationView projectNotificationView = new ProjectNotificationView();
         projectNotificationView.setContent(projectNotificationContent);
@@ -186,6 +193,63 @@ public class JmsNotificationReceiverTestIT {
             DateUtils.createCurrentDateTimestamp(),
             DateUtils.createCurrentDateTimestamp(),
             processed);
+    }
+
+    private AlertNotificationModel createVulnerabilityAlertNotificationModel(Long id, boolean processed) {
+        VulnerabilityNotificationContent vulnerabilityNotificationContent = new VulnerabilityNotificationContent();
+        vulnerabilityNotificationContent.setNewVulnerabilityCount(0);
+        vulnerabilityNotificationContent.setUpdatedVulnerabilityCount(0);
+        vulnerabilityNotificationContent.setDeletedVulnerabilityCount(1);
+
+        VulnerabilitySourceQualifiedId vulnerabilitySourceQualifiedId = createVulnerabilitySourceQualifiedId();
+        vulnerabilityNotificationContent.setNewVulnerabilityIds(List.of());
+        vulnerabilityNotificationContent.setDeletedVulnerabilityIds(List.of(vulnerabilitySourceQualifiedId));
+        vulnerabilityNotificationContent.setUpdatedVulnerabilityIds(List.of());
+        vulnerabilityNotificationContent.setComponentVersion(String.format("https://projectUrl-%s", id));
+        vulnerabilityNotificationContent.setComponentName(String.format("componentName-%s", id));
+        vulnerabilityNotificationContent.setVersionName(String.format("versionName-%s", id));
+        vulnerabilityNotificationContent.setComponentVersionOriginName(String.format("componentVersionOriginName-%s", id));
+
+        AffectedProjectVersion affectedProjectVersion = createAffectedProjectVersion(5L);
+        vulnerabilityNotificationContent.setAffectedProjectVersions(List.of(affectedProjectVersion));
+        vulnerabilityNotificationContent.setComponentVersionOriginId(String.format("componentVersionOriginId-%s", id));
+
+        VulnerabilityNotificationView vulnerabilityNotificationView = new VulnerabilityNotificationView();
+        vulnerabilityNotificationView.setContent(vulnerabilityNotificationContent);
+        vulnerabilityNotificationView.setType(NotificationType.VULNERABILITY);
+        String content = gson.toJson(vulnerabilityNotificationView);
+
+        return new AlertNotificationModel(
+            id,
+            blackDuckGlobalConfigId,
+            "provider_blackduck",
+            "DELETED CONFIGURATION",
+            NotificationType.VULNERABILITY.name(),
+            content,
+            DateUtils.createCurrentDateTimestamp(),
+            DateUtils.createCurrentDateTimestamp(),
+            processed);
+    }
+
+    private VulnerabilitySourceQualifiedId createVulnerabilitySourceQualifiedId() {
+        VulnerabilitySourceQualifiedId vulnerabilitySourceQualifiedId = new VulnerabilitySourceQualifiedId();
+        vulnerabilitySourceQualifiedId.setSource("source");
+        vulnerabilitySourceQualifiedId.setVulnerabilityId("vulnerabilityId");
+        vulnerabilitySourceQualifiedId.setVulnerability("vulnerability");
+        vulnerabilitySourceQualifiedId.setRelatedVulnerabilityId("relatedVulnerabilityId");
+        vulnerabilitySourceQualifiedId.setRelatedVulnerability("relatedVulnerability");
+        vulnerabilitySourceQualifiedId.setSeverity("severity");
+        return vulnerabilitySourceQualifiedId;
+    }
+
+    private AffectedProjectVersion createAffectedProjectVersion(Long id) {
+        AffectedProjectVersion affectedProjectVersion = new AffectedProjectVersion();
+        affectedProjectVersion.setProjectName(String.format("projectName-%s", id));
+        affectedProjectVersion.setProjectVersionName(String.format("projectVersionName-%s", id));
+        affectedProjectVersion.setProjectVersion("projectVersion");
+        affectedProjectVersion.setComponentIssueUrl("https://componentIssueUrl");
+        affectedProjectVersion.setBomComponent("bomComponent");
+        return affectedProjectVersion;
     }
 
 }
