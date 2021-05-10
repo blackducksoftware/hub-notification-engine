@@ -4,9 +4,9 @@ buildscript {
     }
 
 		repositories {
-    		maven { url "https://artifactory.internal.synopsys.com/artifactory/bds-integrations-snapshot" }
-    		mavenCentral()
-    		maven { url 'https://plugins.gradle.org/m2/' }
+			maven { url "https://artifactory.internal.synopsys.com/artifactory/bds-integrations-snapshot" }
+			mavenCentral()
+			maven { url 'https://plugins.gradle.org/m2/' }
 		}
 
     dependencies {
