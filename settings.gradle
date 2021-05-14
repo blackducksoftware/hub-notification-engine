@@ -1,4 +1,4 @@
-rootProject.name = 'blackduck-alert'
+rootProject.name = 'dm-blackduck-alert'
 include 'azure-boards-common'
 include 'alert-common'
 include 'alert-database'
