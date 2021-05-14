@@ -10,7 +10,7 @@ buildscript {
 		}
 
     dependencies {
-        classpath "com.synopsys.integration:common-gradle-plugin:1.11.2-SNAPSHOT"
+        classpath "com.synopsys.integration:common-gradle-plugin:1.11.1-SNAPSHOT"
     }
 
     dependencies {
