@@ -1,0 +1,52 @@
+.brian-header {
+  margin: 5px;
+}
+
+.brian-description {
+  position: relative;
+}
+
+.brian-table {
+  display: table;
+  border: 1px solid black;
+  width: 100%;
+}
+
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  margin-left: 5px;
+  margin-top: 2px;
+
+  border-bottom: 4px solid black;
+}
+
+.arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  margin-left: 5px;
+  margin-top: 2px;
+
+  border-top: 4px solid black;
+}
+
+.brian-arrows {
+  height: 100%;
+  position: relative;
+}
+
+.brian-header {
+  display: flex;
+}
+
+.brian-row {
+  border: 1px solid black;
+}
+
+.brian-column {
+  border: 1px solid black;
+}

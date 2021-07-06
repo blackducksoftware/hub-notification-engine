@@ -72,6 +72,9 @@ const Navigation = ({ confirmLogoutPressed, globalDescriptorMap }) => {
                         <NavLink to={DISTRIBUTION_URLS.distributionTableUrl} activeClassName="activeNav">
                             {DISTRIBUTION_INFO.label}
                         </NavLink>
+                        <NavLink to={`${DISTRIBUTION_URLS.distributionTableUrl}custom`} activeClassName="activeNav">
+                            {`${DISTRIBUTION_INFO.label}custom`}
+                        </NavLink>
                     </li>
                     <li className="divider" />
                     {doesDescriptorExist(globalDescriptorMap, AUDIT_INFO.key) && createStaticNavItem(componentUri, AUDIT_INFO)}

@@ -43,6 +43,7 @@ import DistributionConfigurationForm from 'page/distribution/DistributionConfigu
 import { unauthorized } from 'store/actions/session';
 import * as HTTPErrorUtils from 'common/util/httpErrorUtilities';
 import DescriptorRoute from 'common/DescriptorRoute';
+import DistributionConfigurationTableCustomCSS from "../page/distribution/fun/DistributionConfigurationTableCustomCSS";
 
 const MainPage = ({
     descriptors, fetching, getDescriptorsRedux, csrfToken, autoRefresh, unauthorizedFunction
@@ -189,6 +190,7 @@ const MainPage = ({
                 <DistributionConfigurationForm csrfToken={csrfToken} readonly={false} descriptors={distributionDescriptorMap} errorHandler={errorHandler} />
             </Route>
             {createRoute('/alert/jobs/', DISTRIBUTION_INFO.url, <DistributionConfiguration csrfToken={csrfToken} descriptors={descriptors} errorHandler={errorHandler} showRefreshButton={!autoRefresh} />)}
+            {createRoute('/alert/jobs/', `${DISTRIBUTION_INFO.url}custom`, <DistributionConfigurationTableCustomCSS csrfToken={csrfToken} descriptors={descriptors} errorHandler={errorHandler} showRefreshButton={!autoRefresh} />)}
             <DescriptorRoute
                 uriPrefix={componentUri}
                 urlName={AUDIT_INFO.url}
